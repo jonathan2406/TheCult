@@ -72,7 +72,7 @@ def register():
             'role': 'initiate'
         }
         
-        flash('¡Registro exitoso! Ahora puedes iniciar sesión', 'success')
+        flash('¡Registro exitoso! Ahora puedes iniciar sesión con tus credenciales', 'success')
         return redirect(url_for('login'))
     
     return render_template('register.html')
@@ -101,7 +101,8 @@ def login():
         resp = make_response(redirect(url_for('dashboard')))
         resp.set_cookie('token', token)
         
-        flash('¡Has ingresado con éxito!', 'success')
+        # Mensaje más descriptivo
+        flash(f'¡Bienvenido, {username}! Has ingresado con éxito.', 'success')
         return resp
     
     return render_template('login.html')

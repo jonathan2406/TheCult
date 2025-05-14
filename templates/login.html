@@ -3,10 +3,22 @@ content %}
 <div class="row">
   <div class="col-md-6 mx-auto">
     <div class="card">
-      <div class="card-header bg-dark text-red text-center">
+      <div class="card-header bg-dark text-white text-center">
         <h3>Acceder al Culto</h3>
       </div>
       <div class="card-body">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %} {% if category ==
+        'success' and 'Registro exitoso' in message %}
+        <div class="alert alert-success mb-4">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ message }}
+          <p class="mt-2 mb-0 small">
+            Ingresa con tus nuevas credenciales para acceder al Culto.
+          </p>
+        </div>
+        {% endif %} {% endfor %} {% endif %} {% endwith %}
+
         <form method="POST" action="{{ url_for('login') }}">
           <div class="mb-3">
             <label for="username" class="form-label">Nombre de Usuario</label>

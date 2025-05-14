@@ -9,19 +9,19 @@ import re
 from cryptography.fernet import Fernet
 
 app = Flask(__name__)
-app.secret_key = 'secreto_del_culto'
-app.config['JWT_SECRET_KEY'] = 'secreto_jwt_del_culto'
+app.secret_key = os.environ.get('SECRET_KEY', 'secreto_del_culto')
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'secreto_jwt_del_culto')
 
 # Almacenamiento de usuarios y mensajes
 users_db = {}
 messages_db = []
 
 # Clave para el cifrado de texto
-cipher_key = b'ZKvw2mJT5gAw5ChMVKkJaULLLdPwT2alqPvMhWqOr0E='
+cipher_key = os.environ.get('CIPHER_KEY', b'ZKvw2mJT5gAw5ChMVKkJaULLLdPwT2alqPvMhWqOr0E=')
 cipher = Fernet(cipher_key)
 
 # Clave del sumo sacerdote (visible en su perfil)
-priest_key = "dark3ssUnveiled"
+priest_key = os.environ.get('PRIEST_KEY', "dark3ssUnveiled")
 
 # Decorador para verificar el JWT
 def token_required(f):
@@ -301,4 +301,4 @@ def create_highpriest():
     }
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True) 
+    app.run(debug=True) 

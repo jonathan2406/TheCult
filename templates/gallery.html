@@ -80,6 +80,9 @@ block head %}
     font-size: 0.8rem;
     letter-spacing: 1px;
   }
+  .text-red {
+    color: #920f0f;
+  }
 </style>
 {% endblock %} {% block content %}
 <div class="row">
@@ -103,7 +106,7 @@ block head %}
             </div>
             <div>
               <h4 class="mb-0">Colección Privada</h4>
-              <p class="text-muted mb-0">Repositorio de conocimiento arcano</p>
+              <p class="text-red mb-0">Repositorio de conocimiento arcano</p>
             </div>
           </div>
           <p>
@@ -164,13 +167,6 @@ block head %}
                     class="d-flex justify-content-between align-items-center"
                   >
                     <small class="cipher-text">exf-medt:71d3f</small>
-                    <a
-                      href="{{ url_for('static', filename='img/revelacion.jpg') }}"
-                      class="btn btn-sm btn-outline-danger"
-                      download
-                    >
-                      <i class="bi bi-download me-1"></i>Examinar
-                    </a>
                   </div>
                 </div>
               </div>

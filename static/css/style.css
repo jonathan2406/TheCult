@@ -17,6 +17,9 @@ body {
 .sacred-text {
   position: relative;
 }
+.text-red {
+  color: #920f0f;
+}
 
 .sacred-text::after {
   content: "";

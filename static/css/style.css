@@ -20,7 +20,9 @@ body {
 .text-red {
   color: #920f0f;
 }
-
+.text-white {
+  color: #ffffff;
+}
 .sacred-text::after {
   content: "";
   position: absolute;

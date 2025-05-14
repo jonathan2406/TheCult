@@ -40,21 +40,23 @@ block content %}
               <a href="{{ url_for('mural') }}" class="text-danger"
                 >Visitar el Mural de Revelaciones</a
               >
-              - Comparte tus conocimientos con otros miembros
+              <span class="text-white"
+                >- Comparte tus conocimientos con otros miembros</span
+              >
             </li>
             {% if user.role == 'chosen' or user.role == 'priest' %}
             <li class="list-group-item bg-transparent">
               <a href="{{ url_for('gallery') }}" class="text-danger"
                 >Acceder a la Galería Secreta</a
               >
-              - Solo para los Elegidos
+              <span class="text-white">- Solo para los Elegidos</span>
             </li>
             {% endif %}
             <li class="list-group-item bg-transparent">
               <a href="{{ url_for('highpriest_profile') }}" class="text-danger"
                 >Ver perfil del Sumo Sacerdote</a
               >
-              - Conoce a nuestro líder
+              <span class="text-white">- Conoce a nuestro líder</span>
             </li>
           </ul>
         </div>

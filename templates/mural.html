@@ -1,0 +1,173 @@
+{% extends 'base.html' %} {% block title %}Mural de Revelaciones{% endblock %}
+{% block head %}
+<style>
+  .message-card {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+  }
+  .message-card:hover {
+    border-left-color: var(--accent-color);
+  }
+  .message-content {
+    background-color: rgba(10, 10, 10, 0.4);
+    border-radius: 0.5rem;
+    padding: 15px;
+  }
+  .author-badge {
+    background-color: rgba(139, 0, 0, 0.2);
+    color: var(--text-light);
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+  }
+  .timeline-connector {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: 32px;
+    width: 2px;
+    background-color: var(--border-dark);
+    z-index: 0;
+  }
+  .form-text {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  .form-container {
+    background-color: rgba(20, 20, 20, 0.5);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid rgba(139, 0, 0, 0.2);
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header bg-dark d-flex align-items-center p-3">
+        <i
+          class="bi bi-chat-square-text-fill me-2 text-danger"
+          style="font-size: 1.5rem"
+        ></i>
+        <div>
+          <h3 class="mb-0">Mural de Revelaciones</h3>
+          <p class="text-muted mb-0">
+            <small>Visiones y mensajes de los iniciados</small>
+          </p>
+        </div>
+      </div>
+      <div class="card-body p-4">
+        <div class="form-container mb-3">
+          <form method="POST" action="{{ url_for('post_message') }}">
+            <div class="mb-3">
+              <label for="message" class="form-label d-flex align-items-center">
+                <i class="bi bi-pencil-fill me-2 text-danger"></i>Comparte tu
+                revelación:
+              </label>
+              <textarea
+                class="form-control bg-dark text-light"
+                id="message"
+                name="message"
+                rows="3"
+                required
+              ></textarea>
+              <div class="form-text mt-2">
+                <i class="bi bi-info-circle me-1"></i>Tus visiones serán leídas
+                por todos los miembros, incluidos los de mayor rango.
+                <span style="opacity: 0.7; font-size: 0.85rem"
+                  >Se permiten códigos para enriquecer tus mensajes.</span
+                >
+              </div>
+            </div>
+            <div class="d-grid gap-2 col-md-6 mx-auto">
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-send-fill me-2"></i>Publicar Revelación
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensajes del mural -->
+    <div class="d-flex align-items-center mb-4">
+      <div class="bg-dark p-2 rounded-circle me-3">
+        <i class="bi bi-clock-history text-danger"></i>
+      </div>
+      <h4 class="mb-0">Revelaciones Recientes</h4>
+    </div>
+
+    <div class="position-relative">
+      {% if messages %}
+      <div class="timeline-connector"></div>
+
+      {% for message in messages|reverse %}
+      <div class="card message-card mb-3 ms-5">
+        <div
+          class="card-header bg-dark d-flex justify-content-between align-items-center"
+        >
+          <div class="d-flex align-items-center">
+            <div
+              class="bg-dark rounded-circle d-flex align-items-center justify-content-center me-3"
+              style="
+                width: 42px;
+                height: 42px;
+                position: absolute;
+                left: -21px;
+                z-index: 1;
+                border: 3px solid var(--dark-secondary);
+              "
+            >
+              <i class="bi bi-person text-danger"></i>
+            </div>
+            <span class="author-badge ms-3">{{ message.author }}</span>
+          </div>
+          <small class="text-muted"
+            >{{ message.timestamp.strftime('%d/%m/%Y %H:%M') }}</small
+          >
+        </div>
+        <div class="card-body">
+          <!-- Intencionalmente vulnerable a XSS -->
+          <div class="message-content">{{ message.content|safe }}</div>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="alert alert-dark border-danger">
+        <div class="d-flex align-items-center">
+          <i
+            class="bi bi-chat-square me-3 text-danger"
+            style="font-size: 2rem"
+          ></i>
+          <p class="mb-0">
+            Aún no hay revelaciones. Sé el primero en compartir tus visiones con
+            los demás miembros.
+          </p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Botón oculto para simular el bot (solo para propósitos de demo) -->
+    <div class="text-center mt-4">
+      <div
+        class="card bg-dark border-danger"
+        style="background-color: rgba(22, 22, 22, 0.5)"
+      >
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center justify-content-between">
+            <small class="text-muted"
+              ><i class="bi bi-code-slash me-1"></i>Para propósitos de
+              demo:</small
+            >
+            <a
+              href="{{ url_for('simulate_bot') }}"
+              class="btn btn-sm btn-outline-danger"
+            >
+              <i class="bi bi-robot me-1"></i>Simular lectura nocturna
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

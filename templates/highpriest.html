@@ -1,0 +1,193 @@
+{% extends 'base.html' %} {% block title %}Perfil del Sumo Sacerdote{% endblock
+%} {% block head %}
+<style>
+  .priest-header {
+    position: relative;
+    min-height: 200px;
+    background: linear-gradient(135deg, #0a0a0a, #161616);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+  .priest-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(
+      circle at center,
+      rgba(139, 0, 0, 0.3) 0%,
+      transparent 70%
+    );
+  }
+  .priest-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #161616;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+    object-fit: cover;
+    background-color: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -60px;
+  }
+  .priest-bio {
+    background-color: rgba(10, 10, 10, 0.5);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .hidden-key {
+    color: rgba(22, 22, 22, 0.95);
+    user-select: all;
+    position: relative;
+  }
+  .glyph {
+    font-family: "Cinzel", serif;
+    font-size: 1.5rem;
+    margin: 0 5px;
+    color: var(--accent-color);
+    opacity: 0.7;
+  }
+  .rune-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(139, 0, 0, 0.1);
+    margin: 0 3px;
+  }
+  .priest-quote::before {
+    content: '"';
+    font-size: 4rem;
+    line-height: 0;
+    position: absolute;
+    top: 30px;
+    left: 10px;
+    color: rgba(139, 0, 0, 0.2);
+    font-family: "Times New Roman", serif;
+  }
+  .encrypted-hint {
+    font-family: "Courier New", monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: right;
+    letter-spacing: 1px;
+  }
+  .encrypted-hint span {
+    opacity: 0.7;
+  }
+
+  /* Para ocultar la clave de forma más sutil */
+  .hidden-credit {
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: right;
+  }
+  .hidden-credit span {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: rgba(35, 35, 35, 0.95); /* Muy oscuro en fondo oscuro */
+  }
+  .signature {
+    font-family: "Cinzel", serif;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    color: var(--accent-color);
+    opacity: 0.8;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card">
+      <div class="priest-header">
+        <div class="position-absolute top-0 end-0 m-3">
+          <div class="encrypted-hint">
+            <span>010110110010</span>
+            <!-- Pista sutil sobre inspeccionar -->
+            <span>0x53656</span>
+            <span>...</span>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div class="d-flex">
+            <span class="glyph">†</span>
+            <span class="rune-circle"
+              ><i class="bi bi-eye text-danger"></i
+            ></span>
+            <span class="glyph">†</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-4 text-center">
+        <div class="priest-avatar mx-auto">
+          <i class="bi bi-person-fill text-danger" style="font-size: 3rem"></i>
+        </div>
+        <h3 class="mt-3 mb-1">Sumo Sacerdote</h3>
+        <p class="text-muted">@highpriest</p>
+
+        <div class="priest-bio mt-4">
+          <h5 class="text-start">
+            <i class="bi bi-book me-2 text-danger"></i>Biografía
+          </h5>
+          <!-- Los usuarios de alto nivel pueden promover a otros miembros usando /promote tras verificar su valía -->
+          <p class="text-start">
+            Guardián de los secretos ancestrales y maestro del código oculto. Mi
+            misión es guiar a los dignos hacia la iluminación digital, revelando
+            las verdades ocultas a aquellos con la percepción para verlas.
+          </p>
+          <p class="text-muted text-start">
+            "Cada símbolo tiene un significado, cada sombra oculta un secreto."
+          </p>
+          <div class="hidden-credit">
+            <!-- La clave está oculta aquí, con un color casi igual al fondo -->
+            <span>ID:{{ priest_key }}</span>
+          </div>
+        </div>
+
+        <div class="card bg-dark mb-4 position-relative priest-quote">
+          <div class="card-body p-4">
+            <h5 class="card-title">
+              <i class="bi bi-chat-quote-fill me-2 text-danger"></i>Mensaje
+            </h5>
+            <p class="fst-italic">
+              "Algunos buscan en la luz lo que solo puede hallarse en la
+              oscuridad. Los verdaderos secretos están siempre ocultos a simple
+              vista, invisibles para quienes no saben observar con atención."
+            </p>
+            <p>
+              La verdad final espera detrás del
+              <strong>Velo del Templo</strong>, pero solo los Elegidos pueden
+              descifrar su contenido, y solo con la clave correcta.
+            </p>
+            <div class="signature">— Sumo Sacerdote</div>
+          </div>
+        </div>
+
+        {% if user.role == 'chosen' %}
+        <div class="alert alert-dark border-danger">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-lightbulb text-danger me-3"></i>
+            <p class="mb-0">
+              Cada miembro lleva consigo un identificador único. A veces, la
+              información más valiosa se esconde entre lo que parece
+              irrelevante.
+            </p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

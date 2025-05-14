@@ -1,0 +1,219 @@
+{% extends 'base.html' %} {% block title %}Galería Secreta{% endblock %} {%
+block head %}
+<style>
+  .gallery-container {
+    padding: 2rem 0;
+  }
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    transition: all 0.5s ease;
+    height: 250px;
+  }
+  .gallery-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+  }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+  }
+  .gallery-item:hover img {
+    filter: brightness(0.7);
+    transform: scale(1.05);
+  }
+  .gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    padding: 15px;
+    transform: translateY(60px);
+    transition: all 0.3s ease;
+  }
+  .gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+  }
+  .gallery-title {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    opacity: 0.9;
+  }
+  .gallery-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  .gallery-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(139, 0, 0, 0.8);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .mysterious-item {
+    border: 1px solid rgba(139, 0, 0, 0.3);
+  }
+  .artifact-card {
+    border: none;
+    background: linear-gradient(
+      145deg,
+      rgba(22, 22, 22, 0.7),
+      rgba(10, 10, 10, 0.9)
+    );
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  .cipher-text {
+    font-family: "Courier New", monospace;
+    color: rgba(200, 200, 200, 0.7);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-lg-10 mx-auto">
+    <div class="card mb-4">
+      <div class="card-header bg-dark d-flex align-items-center p-3">
+        <i
+          class="bi bi-collection text-danger me-2"
+          style="font-size: 1.5rem"
+        ></i>
+        <h3 class="mb-0">Sala de Artefactos</h3>
+      </div>
+      <div class="card-body p-4">
+        <div class="artifact-card p-4 mb-4">
+          <div class="d-flex align-items-center mb-3">
+            <div
+              class="rounded-circle bg-danger d-flex align-items-center justify-content-center me-3"
+              style="width: 40px; height: 40px"
+            >
+              <i class="bi bi-key-fill text-light"></i>
+            </div>
+            <div>
+              <h4 class="mb-0">Colección Privada</h4>
+              <p class="text-muted mb-0">Repositorio de conocimiento arcano</p>
+            </div>
+          </div>
+          <p>
+            Has demostrado perspicacia para llegar hasta aquí, Elegido. Este
+            recinto contiene artefactos visuales cargados de significado. Uno de
+            ellos encierra un mensaje que solo los iniciados con auténtica
+            visión pueden descubrir.
+          </p>
+        </div>
+
+        <div class="gallery-container">
+          <div class="row">
+            <div class="col-md-6 col-lg-4">
+              <div class="gallery-item">
+                <span class="gallery-badge">Simbología</span>
+                <img
+                  src="{{ url_for('static', filename='img/symbol1.jpg') }}"
+                  alt="Simbolo antiguo"
+                />
+                <div class="gallery-overlay">
+                  <h5 class="gallery-title">Símbolo Primordial</h5>
+                  <p class="gallery-description">
+                    Primero de los símbolos fundacionales del conocimiento
+                    oculto.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="gallery-item">
+                <span class="gallery-badge">Vigilancia</span>
+                <img
+                  src="{{ url_for('static', filename='img/symbol2.jpg') }}"
+                  alt="Ojo vigilante"
+                />
+                <div class="gallery-overlay">
+                  <h5 class="gallery-title">Visión Eterna</h5>
+                  <p class="gallery-description">
+                    La mirada que observa más allá de lo perceptible.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="gallery-item mysterious-item">
+                <span class="gallery-badge">Revelación</span>
+                <img
+                  src="{{ url_for('static', filename='img/revelacion.jpg') }}"
+                  alt="Revelación secreta"
+                />
+                <div class="gallery-overlay">
+                  <h5 class="gallery-title">Codex Arcanum</h5>
+                  <p class="gallery-description">
+                    Un patrón visual que contiene información más allá de lo
+                    visible.
+                  </p>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <small class="cipher-text">exf-medt:71d3f</small>
+                    <a
+                      href="{{ url_for('static', filename='img/revelacion.jpg') }}"
+                      class="btn btn-sm btn-outline-danger"
+                      download
+                    >
+                      <i class="bi bi-download me-1"></i>Examinar
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="gallery-item">
+                <span class="gallery-badge">Escritura</span>
+                <img
+                  src="{{ url_for('static', filename='img/symbol3.jpg') }}"
+                  alt="Código Ancestral"
+                />
+                <div class="gallery-overlay">
+                  <h5 class="gallery-title">Lenguaje Arcano</h5>
+                  <p class="gallery-description">
+                    Sistema de codificación antiguo para comunicación entre
+                    iniciados.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-dark mb-4">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center">
+          <i
+            class="bi bi-info-circle text-danger me-3"
+            style="font-size: 1.5rem"
+          ></i>
+          <div>
+            <h5 class="mb-1">Consejo del Archivista</h5>
+            <p class="mb-0 text-muted">
+              "Los objetos digitales, al igual que los físicos, contienen capas
+              de información. A veces, lo que no se ve a simple vista puede
+              resultar más revelador que lo evidente."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

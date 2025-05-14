@@ -1,0 +1,112 @@
+{% extends 'base.html' %} {% block title %}Inicio{% endblock %} {% block content
+%}
+<div class="cult-banner">
+  <h1 class="text-center">EL CULTO DEL SELLO ROTO</h1>
+</div>
+
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card mb-4">
+      <div class="card-body p-4 p-md-5">
+        <h2 class="card-title text-center mb-4">
+          La Orden de la Verdad Oculta
+        </h2>
+
+        <div class="row mb-4">
+          <div class="col-md-4 mb-3 mb-md-0 text-center">
+            <div
+              class="feature-icon rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center"
+              style="
+                width: 80px;
+                height: 80px;
+                background-color: rgba(139, 0, 0, 0.2);
+              "
+            >
+              <i class="bi bi-eye text-danger" style="font-size: 2rem"></i>
+            </div>
+            <h5>Observa</h5>
+            <p class="text-muted small">Más allá de lo visible</p>
+          </div>
+          <div class="col-md-4 mb-3 mb-md-0 text-center">
+            <div
+              class="feature-icon rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center"
+              style="
+                width: 80px;
+                height: 80px;
+                background-color: rgba(139, 0, 0, 0.2);
+              "
+            >
+              <i class="bi bi-puzzle text-danger" style="font-size: 2rem"></i>
+            </div>
+            <h5>Descifra</h5>
+            <p class="text-muted small">Los códigos antiguos</p>
+          </div>
+          <div class="col-md-4 text-center">
+            <div
+              class="feature-icon rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center"
+              style="
+                width: 80px;
+                height: 80px;
+                background-color: rgba(139, 0, 0, 0.2);
+              "
+            >
+              <i class="bi bi-key text-danger" style="font-size: 2rem"></i>
+            </div>
+            <h5>Trasciende</h5>
+            <p class="text-muted small">Los límites de la percepción</p>
+          </div>
+        </div>
+
+        <p class="card-text">
+          Has descubierto el portal a una sociedad que trasciende el plano
+          ordinario. Nuestros secretos han permanecido ocultos a lo largo de los
+          siglos, velados entre códigos y símbolos.
+        </p>
+        <p class="card-text">
+          En la era digital, nuestra orden ha evolucionado. Entre líneas de
+          código y sistemas aparentemente ordinarios, se encuentra un
+          conocimiento que sólo los verdaderos iniciados pueden percibir.
+        </p>
+
+        <div
+          class="alert alert-dark border-danger mb-4"
+          style="background-color: rgba(22, 22, 22, 0.5)"
+        >
+          <div class="d-flex">
+            <div class="me-3">
+              <i class="bi bi-quote text-danger" style="font-size: 2rem"></i>
+            </div>
+            <div>
+              <p class="mb-0 fst-italic">
+                "Los conocimientos más valiosos no son los que se encuentran a
+                simple vista, sino aquellos que requieren ser buscados en las
+                sombras."
+              </p>
+              <small class="text-muted d-block text-end mt-2"
+                >— Manuscritos del Culto</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          {% if not request.cookies.get('token') %}
+          <div class="d-grid gap-2 col-md-6 mx-auto">
+            <a href="{{ url_for('register') }}" class="btn btn-danger btn-lg">
+              <i class="bi bi-person-plus me-2"></i>Únete al Culto
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light">
+              <i class="bi bi-key me-2"></i>Ya soy miembro
+            </a>
+          </div>
+          {% else %}
+          <a href="{{ url_for('dashboard') }}" class="btn btn-danger btn-lg">
+            <i class="bi bi-grid-1x2 me-2"></i>Acceder a tu Panel
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

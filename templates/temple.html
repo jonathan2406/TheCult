@@ -1,0 +1,595 @@
+{% extends 'base.html' %} {% block title %}Templo Velado{% endblock %} {% block
+head %}
+<style>
+  .temple-container {
+    background-color: var(--dark-bg);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(139, 0, 0, 0.2);
+    background: linear-gradient(
+      135deg,
+      rgba(12, 12, 12, 0.95),
+      rgba(22, 22, 22, 0.95)
+    );
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(139, 0, 0, 0.2);
+  }
+
+  .temple-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b0000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    z-index: 0;
+  }
+
+  .temple-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .temple-title {
+    color: var(--accent-color);
+    font-family: "Cinzel", serif;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 0 0 15px rgba(139, 0, 0, 0.3);
+    margin-bottom: 2rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .temple-title::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--accent-color),
+      transparent
+    );
+  }
+
+  .sacred-text {
+    font-family: "Courier New", monospace;
+    background-color: rgba(10, 10, 10, 0.7);
+    color: rgba(200, 200, 200, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    overflow-wrap: break-word;
+    line-height: 1.6;
+    max-height: 200px;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .sacred-text::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0.1) 10px,
+      rgba(0, 0, 0, 0.2) 10px,
+      rgba(0, 0, 0, 0.2) 20px
+    );
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+  }
+
+  .sacred-text-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .decryptor-card {
+    background: rgba(15, 15, 15, 0.7);
+    border: 1px solid rgba(139, 0, 0, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .decryptor-card:hover {
+    border-color: rgba(139, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(139, 0, 0, 0.1);
+  }
+
+  .key-input {
+    background-color: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(139, 0, 0, 0.3);
+    color: var(--text-light);
+    padding: 12px 15px;
+    font-family: "Courier New", monospace;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .key-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(139, 0, 0, 0.25);
+  }
+
+  .decrypt-btn {
+    background-color: var(--accent-color);
+    border: none;
+    padding: 12px 30px;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .decrypt-btn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
+  }
+
+  .symbol {
+    position: absolute;
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .symbol-1 {
+    top: 20px;
+    right: 20px;
+    font-size: 60px;
+    transform: rotate(15deg);
+  }
+
+  .symbol-2 {
+    bottom: 20px;
+    left: 20px;
+    font-size: 40px;
+    transform: rotate(-10deg);
+  }
+
+  .glow-effect {
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 5px #8b0000, 0 0 10px #8b0000;
+    }
+    to {
+      text-shadow: 0 0 15px #8b0000, 0 0 20px #8b0000;
+    }
+  }
+
+  .revealed-text {
+    color: var(--accent-color);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .step-container {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .step-container.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hash-text {
+    font-family: "Courier New", monospace;
+    color: #ff9800;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(139, 0, 0, 0.3);
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+
+  .step-dot.active {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+  }
+
+  .step-title {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="temple-container">
+      <div class="temple-content">
+        <div class="symbol symbol-1">&#9733;</div>
+        <div class="symbol symbol-2">&#9764;</div>
+
+        <h2 class="temple-title text-center">El Velo del Templo</h2>
+
+        <div class="step-indicator">
+          <div class="step-dot active" id="step-dot-1"></div>
+          <div class="step-dot" id="step-dot-2"></div>
+          <div class="step-dot" id="step-dot-3"></div>
+        </div>
+
+        <div
+          class="alert alert-dark border-danger mb-4"
+          style="background-color: rgba(22, 22, 22, 0.5)"
+        >
+          <div class="d-flex">
+            <div class="me-3">
+              <i
+                class="bi bi-lock-fill text-danger"
+                style="font-size: 2rem"
+              ></i>
+            </div>
+            <div>
+              <h5 class="alert-heading">Cámara Interior</h5>
+              <p class="mb-0">
+                Has accedido a la cámara más interna del templo. Aquí descansa
+                el conocimiento secreto, protegido por un cifrado arcano que
+                solo puede desvelarse mediante la clave correcta.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-2">
+              <i class="bi bi-file-earmark-lock2 text-danger"></i>
+            </div>
+            <h5 class="mb-0">Manuscrito Cifrado</h5>
+          </div>
+          <div class="sacred-text mb-4">
+            <div class="sacred-text-content" id="encrypted-message">
+              {{ encrypted_message }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 1: Descifrado inicial -->
+        <div class="step-container show" id="step-1">
+          <div class="decryptor-card p-4 mb-4">
+            <div class="d-flex align-items-center mb-3">
+              <div class="me-2">
+                <i class="bi bi-shield-lock text-danger"></i>
+              </div>
+              <h5 class="mb-0">Primer Sello</h5>
+            </div>
+            <p class="text-muted mb-3">
+              Ingresa la clave del Sumo Sacerdote para comenzar el ritual de
+              descifrado.
+            </p>
+            <div class="row g-2">
+              <div class="col-md-8">
+                <input
+                  type="text"
+                  class="form-control key-input"
+                  id="key-1"
+                  placeholder="Introduce la clave del Sumo Sacerdote..."
+                />
+              </div>
+              <div class="col-md-4">
+                <button
+                  id="decrypt-btn-1"
+                  class="btn decrypt-btn w-100"
+                  data-step="1"
+                >
+                  <i class="bi bi-unlock me-2"></i>Descifrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Hash descifrado -->
+        <div class="step-container" id="step-2">
+          <div
+            class="alert alert-dark border-warning mb-4"
+            style="background-color: rgba(22, 22, 22, 0.5)"
+          >
+            <div class="d-flex">
+              <div class="me-3">
+                <i
+                  class="bi bi-exclamation-triangle text-warning"
+                  style="font-size: 1.5rem"
+                ></i>
+              </div>
+              <div>
+                <h5 class="alert-heading text-warning">Secuencia Incompleta</h5>
+                <p class="mb-0">
+                  Has roto el primer sello, pero el manuscrito revela otro
+                  enigma. Un código que requiere ser interpretado para
+                  continuar.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="sacred-text mb-4">
+            <div class="sacred-text-content hash-text" id="hash-result"></div>
+          </div>
+
+          <div class="decryptor-card p-4 mb-4">
+            <div class="d-flex align-items-center mb-3">
+              <div class="me-2">
+                <i class="bi bi-braces text-danger"></i>
+              </div>
+              <h5 class="mb-0">Segundo Sello</h5>
+            </div>
+            <p class="text-muted mb-3">
+              El código anterior debe ser descifrado. Ingresa el resultado para
+              completar el ritual.
+            </p>
+            <div class="row g-2">
+              <div class="col-md-8">
+                <input
+                  type="text"
+                  class="form-control key-input"
+                  id="key-2"
+                  placeholder="Resultado del descifrado..."
+                />
+              </div>
+              <div class="col-md-4">
+                <button
+                  id="decrypt-btn-2"
+                  class="btn decrypt-btn w-100"
+                  data-step="2"
+                >
+                  <i class="bi bi-key me-2"></i>Completar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resultado final -->
+        <div id="decrypted-container" style="display: none">
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-2">
+              <i class="bi bi-stars text-danger"></i>
+            </div>
+            <h5 class="mb-0 glow-effect">Verdad Revelada</h5>
+          </div>
+          <div class="sacred-text mb-4">
+            <div
+              class="sacred-text-content revealed-text"
+              id="decrypted-message"
+            ></div>
+          </div>
+          <div class="text-center">
+            <div
+              class="alert alert-dark border-danger"
+              style="background-color: rgba(22, 22, 22, 0.5)"
+            >
+              <p class="mb-0">
+                <i class="bi bi-trophy me-2 text-danger"></i>
+                Felicitaciones, has completado el recorrido y descubierto el
+                secreto final.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const decryptBtn1 = document.getElementById("decrypt-btn-1");
+    const decryptBtn2 = document.getElementById("decrypt-btn-2");
+    const keyInput1 = document.getElementById("key-1");
+    const keyInput2 = document.getElementById("key-2");
+    const step1Container = document.getElementById("step-1");
+    const step2Container = document.getElementById("step-2");
+    const hashResult = document.getElementById("hash-result");
+    const stepDot1 = document.getElementById("step-dot-1");
+    const stepDot2 = document.getElementById("step-dot-2");
+    const stepDot3 = document.getElementById("step-dot-3");
+
+    // Evento para el primer paso
+    decryptBtn1.addEventListener("click", function () {
+      const key = keyInput1.value.trim();
+      const message = document
+        .getElementById("encrypted-message")
+        .textContent.trim();
+
+      if (!key) {
+        showNotification(
+          "Por favor, introduce la clave del Sumo Sacerdote",
+          "error"
+        );
+        keyInput1.focus();
+        return;
+      }
+
+      // Animación de carga
+      const originalText = decryptBtn1.innerHTML;
+      decryptBtn1.innerHTML =
+        '<i class="bi bi-arrow-repeat spin me-2"></i>Descifrando...';
+      decryptBtn1.disabled = true;
+
+      // Enviar solicitud al servidor para el primer paso
+      fetchDecrypt(key, message, "1")
+        .then((data) => {
+          decryptBtn1.innerHTML = originalText;
+          decryptBtn1.disabled = false;
+
+          if (data.success && data.next_step) {
+            // Mostrar el hash y pasar al segundo paso
+            hashResult.textContent = data.message;
+
+            // Actualizar indicadores de paso
+            stepDot1.classList.remove("active");
+            stepDot2.classList.add("active");
+
+            // Transición entre pasos
+            step1Container.classList.remove("show");
+            setTimeout(() => {
+              step1Container.style.display = "none";
+              step2Container.style.display = "block";
+
+              setTimeout(() => {
+                step2Container.classList.add("show");
+                keyInput2.focus();
+              }, 50);
+            }, 500);
+
+            showNotification(
+              "Primer sello descifrado. Continúa con el segundo sello.",
+              "success"
+            );
+          } else {
+            showNotification(
+              data.message || "Clave incorrecta. Inténtalo de nuevo.",
+              "error"
+            );
+            keyInput1.focus();
+          }
+        })
+        .catch((error) => handleFetchError(error, decryptBtn1, originalText));
+    });
+
+    // Evento para el segundo paso
+    decryptBtn2.addEventListener("click", function () {
+      const key = keyInput2.value.trim();
+      const message = hashResult.textContent.trim();
+
+      if (!key) {
+        showNotification(
+          "Por favor, introduce el resultado del descifrado",
+          "error"
+        );
+        keyInput2.focus();
+        return;
+      }
+
+      // Animación de carga
+      const originalText = decryptBtn2.innerHTML;
+      decryptBtn2.innerHTML =
+        "<i class='bi bi-arrow-repeat spin me-2'></i>Completando...";
+      decryptBtn2.disabled = true;
+
+      // Enviar solicitud al servidor para el segundo paso
+      fetchDecrypt(key, message, "2")
+        .then((data) => {
+          decryptBtn2.innerHTML = originalText;
+          decryptBtn2.disabled = false;
+
+          if (data.success && data.final) {
+            // Mostrar el resultado final
+            document.getElementById("decrypted-message").textContent =
+              data.message;
+
+            // Actualizar indicadores de paso
+            stepDot2.classList.remove("active");
+            stepDot3.classList.add("active");
+
+            // Mostrar el contenedor final
+            document.getElementById("decrypted-container").style.display =
+              "block";
+
+            // Efecto de revelación
+            scrollToElement(document.getElementById("decrypted-container"));
+
+            showNotification(
+              "¡Descifrado completo! Has revelado el secreto final.",
+              "success"
+            );
+          } else {
+            showNotification(
+              data.message || "Secuencia incorrecta. Inténtalo de nuevo.",
+              "error"
+            );
+            keyInput2.focus();
+          }
+        })
+        .catch((error) => handleFetchError(error, decryptBtn2, originalText));
+    });
+
+    // Permitir enviar al presionar Enter
+    keyInput1.addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        decryptBtn1.click();
+      }
+    });
+
+    keyInput2.addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+        decryptBtn2.click();
+      }
+    });
+
+    // Función para manejar las solicitudes de descifrado
+    function fetchDecrypt(key, message, step) {
+      return fetch("/decrypt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `key=${encodeURIComponent(key)}&message=${encodeURIComponent(
+          message
+        )}&step=${step}`,
+      }).then((response) => response.json());
+    }
+
+    // Función para manejar errores de fetch
+    function handleFetchError(error, button, originalText) {
+      console.error("Error:", error);
+      button.innerHTML = originalText;
+      button.disabled = false;
+      showNotification("Error en la comunicación con el servidor.", "error");
+    }
+
+    // Función para mostrar notificaciones
+    function showNotification(message, type) {
+      const event = new CustomEvent("showNotification", {
+        detail: { message, type },
+      });
+      document.dispatchEvent(event);
+    }
+
+    // Función para hacer scroll suave a un elemento
+    function scrollToElement(element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+
+    // Inicializar
+    step2Container.style.display = "none";
+  });
+</script>
+{% endblock %}

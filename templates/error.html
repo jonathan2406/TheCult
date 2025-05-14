@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block title %}Error{% endblock %} {% block content
+%}
+<div class="row">
+  <div class="col-md-6 mx-auto text-center">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="text-danger mb-3">¡Error!</h2>
+        <p class="card-text">{{ message|default('Página no encontrada') }}</p>
+        <p class="card-text">Has tomado un camino equivocado en tu búsqueda.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-danger mt-3"
+          >Volver al Panel</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %} {% block title %}Registrarse{% endblock %} {% block
+content %}
+<div class="row">
+  <div class="col-md-6 mx-auto">
+    <div class="card">
+      <div class="card-header bg-dark text-white text-center">
+        <h3>Unirse al Culto</h3>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('register') }}">
+          <div class="mb-3">
+            <label for="username" class="form-label">Nombre de Usuario</label>
+            <input
+              type="text"
+              class="form-control bg-dark text-light"
+              id="username"
+              name="username"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input
+              type="password"
+              class="form-control bg-dark text-light"
+              id="password"
+              name="password"
+              required
+            />
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-danger">Registrarme</button>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-center">
+        <p>
+          ¿Ya eres miembro?
+          <a href="{{ url_for('login') }}" class="text-danger">Inicia sesión</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

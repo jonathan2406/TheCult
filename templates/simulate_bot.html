@@ -1,0 +1,260 @@
+{% extends 'base.html' %} {% block title %}Simulación de Lectura{% endblock %}
+{% block head %}
+<style>
+  .eye-container {
+    width: 150px;
+    height: 150px;
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .eye {
+    width: 120px;
+    height: 120px;
+    background: #111;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+    border: 2px solid #8b0000;
+    box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+    overflow: hidden;
+  }
+
+  .iris {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at center, #8b0000 30%, #222 70%);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: look 4s infinite;
+  }
+
+  .pupil {
+    width: 25px;
+    height: 25px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .reflection {
+    width: 15px;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    filter: blur(1px);
+  }
+
+  .eyelid {
+    width: 100%;
+    height: 50%;
+    background: #0a0a0a;
+    position: absolute;
+    animation: blink 5s infinite;
+  }
+
+  .eyelid.top {
+    top: 0;
+    transform-origin: bottom;
+  }
+
+  .eyelid.bottom {
+    bottom: 0;
+    transform-origin: top;
+  }
+
+  .status-container {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .status-log {
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 20px auto;
+    width: 80%;
+    font-family: "Courier New", monospace;
+    background: rgba(10, 10, 10, 0.7);
+    border-radius: 5px;
+    padding: 15px;
+    border: 1px solid rgba(139, 0, 0, 0.3);
+  }
+
+  .status-line {
+    margin-bottom: 5px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn 0.5s forwards;
+  }
+
+  .status-line:nth-child(1) {
+    animation-delay: 1s;
+  }
+  .status-line:nth-child(2) {
+    animation-delay: 2s;
+  }
+  .status-line:nth-child(3) {
+    animation-delay: 3s;
+  }
+  .status-line:nth-child(4) {
+    animation-delay: 4s;
+  }
+  .status-line:nth-child(5) {
+    animation-delay: 5s;
+  }
+  .status-line:nth-child(6) {
+    animation-delay: 6s;
+  }
+  .status-line:nth-child(7) {
+    animation-delay: 7s;
+  }
+
+  .highlight {
+    color: #8b0000;
+    font-weight: bold;
+  }
+
+  .redirect-message {
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+    animation-delay: 8s;
+  }
+
+  @keyframes look {
+    0%,
+    100% {
+      transform: translate(-50%, -50%);
+    }
+    25% {
+      transform: translate(-65%, -45%);
+    }
+    50% {
+      transform: translate(-50%, -60%);
+    }
+    75% {
+      transform: translate(-35%, -45%);
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    95%,
+    100% {
+      transform: scaleY(0);
+    }
+    97.5% {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .loading-bar {
+    height: 5px;
+    width: 0;
+    background: linear-gradient(90deg, transparent, #8b0000, transparent);
+    margin: 20px auto;
+    max-width: 400px;
+    animation: loading 8s forwards;
+  }
+
+  @keyframes loading {
+    to {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card bg-dark border-danger mb-4">
+      <div class="card-body text-center p-5">
+        <h3 class="mb-4">
+          El Sumo Sacerdote está revisando el Mural de Revelaciones
+        </h3>
+
+        <div class="eye-container">
+          <div class="eye">
+            <div class="eyelid top"></div>
+            <div class="eyelid bottom"></div>
+            <div class="iris">
+              <div class="pupil">
+                <div class="reflection"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-bar"></div>
+
+        <div class="status-container">
+          <div class="status-log">
+            <div class="status-line">
+              <span class="text-muted">[21:03:15]</span> Iniciando sesión con
+              privilegios de <span class="highlight">Sumo Sacerdote</span>...
+            </div>
+            <div class="status-line">
+              <span class="text-muted">[21:03:16]</span> Escaneando mensajes del
+              mural...
+            </div>
+            <div class="status-line">
+              <span class="text-muted">[21:03:18]</span> Buscando códigos
+              ocultos en los mensajes...
+            </div>
+            <div class="status-line">
+              <span class="text-muted">[21:03:25]</span> Ejecutando secuencias
+              de comandos válidas...
+            </div>
+            <div class="status-line">
+              <span class="text-muted">[21:03:27]</span> Verificando rutas
+              internas: <span class="highlight">/prom..</span>...
+            </div>
+            <div class="status-line">
+              <span class="text-muted">[21:03:30]</span> Proceso completado.
+              Actualizando roles de usuarios...
+            </div>
+          </div>
+        </div>
+
+        <div class="redirect-message">
+          <div class="alert alert-danger">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            El Sumo Sacerdote ha finalizado la lectura nocturna.
+            <div class="mt-2">
+              <a
+                href="{{ url_for('dashboard') }}"
+                class="btn btn-sm btn-danger"
+              >
+                <i class="bi bi-arrow-return-left me-1"></i>Volver al panel
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Redireccionar automáticamente después de 10 segundos
+  setTimeout(() => {
+    window.location.href = "{{ url_for('dashboard') }}";
+  }, 15000);
+</script>
+{% endblock %}

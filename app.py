@@ -12,9 +12,29 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'secreto_del_culto')
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'secreto_jwt_del_culto')
 
-# Almacenamiento de usuarios y mensajes
-users_db = {}
-messages_db = []
+# Almacenamiento persistente usando el sistema de archivos de Vercel
+STORAGE_FILE = '/tmp/cult_storage.json'
+
+def load_storage():
+    try:
+        if os.path.exists(STORAGE_FILE):
+            with open(STORAGE_FILE, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return {'users': {}, 'messages': []}
+
+def save_storage(data):
+    try:
+        with open(STORAGE_FILE, 'w') as f:
+            json.dump(data, f)
+    except:
+        pass
+
+# Inicializar almacenamiento
+storage = load_storage()
+users_db = storage.get('users', {})
+messages_db = storage.get('messages', [])
 
 # Clave para el cifrado de texto
 cipher_key = os.environ.get('CIPHER_KEY', b'ZKvw2mJT5gAw5ChMVKkJaULLLdPwT2alqPvMhWqOr0E=')
@@ -143,8 +163,11 @@ def post_message(current_user):
     messages_db.append({
         'author': current_user['username'],
         'content': message,
-        'timestamp': datetime.datetime.utcnow()
+        'timestamp': datetime.datetime.utcnow().isoformat()
     })
+    
+    # Guardar cambios
+    save_storage({'users': users_db, 'messages': messages_db})
     
     flash('¡Mensaje publicado!', 'success')
     return redirect(url_for('mural'))
@@ -172,6 +195,9 @@ def promote():
                 # Promover al usuario
                 users_db[username]['role'] = 'chosen'
                 
+                # Guardar cambios
+                save_storage({'users': users_db, 'messages': messages_db})
+                
                 # Este token actualizado no se aplicará inmediatamente al usuario
                 # pero se puede usar para crear un nuevo token en la respuesta
                 new_token = jwt.encode({
@@ -180,11 +206,7 @@ def promote():
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
                 
-                # El usuario deberá cerrar sesión e iniciar nuevamente para obtener
-                # este nuevo token con sus privilegios actualizados
                 resp = make_response(jsonify({'success': True, 'message': 'Promoción exitosa. Cierra sesión e inicia nuevamente para activar tus privilegios.'}))
-                # Opcionalmente se puede actualizar el token aquí, pero es mejor que el usuario inicie sesión nuevamente
-                # resp.set_cookie('token', new_token)
                 return resp
         except Exception as e:
             return jsonify({'success': False, 'message': str(e)})
@@ -215,10 +237,12 @@ def simulate_bot():
                         promotion_done = True
                         promoted_user = author
     
+    # Guardar cambios si hubo una promoción
+    if promotion_done:
+        save_storage({'users': users_db, 'messages': messages_db})
+    
     # Crear un nuevo token para el usuario promovido
     if promotion_done and promoted_user:
-        # Esto asegura que el usuario tenga su nuevo rol cuando inicie sesión nuevamente
-        # También guardamos esta información en la sesión para mostrarla en la página
         session['promoted_user'] = promoted_user
     
     return render_template('simulate_bot.html')
@@ -295,10 +319,12 @@ def reset_simulation():
 # Inicializar al sumo sacerdote
 @app.before_first_request
 def create_highpriest():
-    users_db['highpriest'] = {
-        'password': 'secretooscuro',
-        'role': 'priest'
-    }
+    if 'highpriest' not in users_db:
+        users_db['highpriest'] = {
+            'password': 'secretooscuro',
+            'role': 'priest'
+        }
+        save_storage({'users': users_db, 'messages': messages_db})
 
 if __name__ == '__main__':
     app.run(debug=True) 

@@ -87,10 +87,13 @@ def login():
             flash('Credenciales inválidas', 'error')
             return redirect(url_for('login'))
         
+        # Asegurarse de usar el rol actualizado del usuario desde users_db
+        current_role = users_db[username]['role']
+        
         # Crear JWT
         token = jwt.encode({
             'username': username,
-            'role': users_db[username]['role'],
+            'role': current_role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
         }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
         
@@ -113,6 +116,16 @@ def logout():
 @app.route('/dashboard')
 @token_required
 def dashboard(current_user):
+    # Verificar si el rol del usuario en el token coincide con su rol actual en la base de datos
+    username = current_user['username']
+    token_role = current_user['role']
+    
+    if username in users_db:
+        db_role = users_db[username]['role']
+        # Si hay una discrepancia en los roles, mostrar una notificación
+        if token_role != db_role:
+            flash(f'¡Tu rol ha sido actualizado a {db_role}! Por favor, cierra sesión e inicia nuevamente para acceder a tus nuevos privilegios.', 'warning')
+    
     return render_template('dashboard.html', user=current_user)
 
 @app.route('/mural')
@@ -137,47 +150,75 @@ def post_message(current_user):
 
 @app.route('/promote')
 def promote():
+    # Verificar si la solicitud proviene del bot simulado
+    referrer = request.headers.get('Referer', '')
+    is_bot_simulation = session.get('bot_simulation', False)
+    
+    # Solo permitir promociones si la solicitud viene de la simulación del bot
+    # o si ya tienes un rol mayor que 'initiate'
+    if 'simulate-bot' not in referrer and not is_bot_simulation:
+        return jsonify({'success': False, 'message': 'Acceso directo no permitido'})
+    
     token = request.cookies.get('token')
     if token:
         try:
             data = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=["HS256"])
             username = data['username']
+            role = data['role']
             
-            # Promocionar al usuario a "chosen"
-            if username in users_db and username != 'highpriest':
+            # Solo permitir promoción si el usuario es 'initiate'
+            if username in users_db and username != 'highpriest' and role == 'initiate':
+                # Promover al usuario
                 users_db[username]['role'] = 'chosen'
                 
-                # Actualizar el token
+                # Este token actualizado no se aplicará inmediatamente al usuario
+                # pero se puede usar para crear un nuevo token en la respuesta
                 new_token = jwt.encode({
                     'username': username,
                     'role': 'chosen',
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
                 
-                resp = make_response(jsonify({'success': True}))
-                resp.set_cookie('token', new_token)
+                # El usuario deberá cerrar sesión e iniciar nuevamente para obtener
+                # este nuevo token con sus privilegios actualizados
+                resp = make_response(jsonify({'success': True, 'message': 'Promoción exitosa. Cierra sesión e inicia nuevamente para activar tus privilegios.'}))
+                # Opcionalmente se puede actualizar el token aquí, pero es mejor que el usuario inicie sesión nuevamente
+                # resp.set_cookie('token', new_token)
                 return resp
-        except:
-            pass
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)})
     
-    return jsonify({'success': False})
+    return jsonify({'success': False, 'message': 'Token no encontrado'})
 
 @app.route('/simulate-bot')
 def simulate_bot():
     # Simular que el sacerdote lee todos los mensajes
     # Si encuentra un script, lo "ejecuta"
+    session['bot_simulation'] = True  # Marca que estamos en una simulación
+    promotion_done = False
+    promoted_user = None
+
     for message in messages_db:
         if '<script>' in message['content'] and '</script>' in message['content']:
             # Extraer URL del script
             script_content = re.search(r'<script>(.*?)</script>', message['content'])
             if script_content:
                 script = script_content.group(1)
-                if 'fetch(\'/promote\')' in script:
+                if 'fetch(\'/promote\')' in script or "fetch('/promote')" in script:
                     # El sacerdote "ejecuta" el script y activa la promoción
                     # para el autor del mensaje
                     author = message['author']
-                    if author in users_db:
+                    if author in users_db and users_db[author]['role'] == 'initiate':
+                        # Actualizar el rol en la base de datos
                         users_db[author]['role'] = 'chosen'
+                        promotion_done = True
+                        promoted_user = author
+    
+    # Crear un nuevo token para el usuario promovido
+    if promotion_done and promoted_user:
+        # Esto asegura que el usuario tenga su nuevo rol cuando inicie sesión nuevamente
+        # También guardamos esta información en la sesión para mostrarla en la página
+        session['promoted_user'] = promoted_user
     
     return render_template('simulate_bot.html')
 
@@ -240,6 +281,15 @@ def decrypt(current_user):
             return jsonify({'success': False, 'message': 'Error al descifrar'})
     
     return jsonify({'success': False, 'message': 'Solicitud inválida'})
+
+@app.route('/reset-simulation')
+def reset_simulation():
+    # Limpiar la variable de sesión de simulación
+    if 'bot_simulation' in session:
+        session.pop('bot_simulation')
+    
+    # Redirigir al dashboard
+    return redirect(url_for('dashboard'))
 
 # Inicializar al sumo sacerdote
 @app.before_first_request

@@ -229,20 +229,49 @@
               <span class="text-muted">[21:03:30]</span> Proceso completado.
               Actualizando roles de usuarios...
             </div>
+            {% if session.get('promoted_user') %}
+            <div class="status-line">
+              <span class="text-muted">[21:03:32]</span>
+              <span class="highlight"
+                >¡Usuario {{ session.get('promoted_user') }} ha sido promovido a
+                ELEGIDO!</span
+              >
+            </div>
+            {% endif %}
           </div>
         </div>
 
         <div class="redirect-message">
           <div class="alert alert-danger">
             <i class="bi bi-check-circle-fill me-2"></i>
-            El Sumo Sacerdote ha finalizado la lectura nocturna.
+            El Sumo Sacerdote ha finalizado la lectura nocturna. {% if
+            session.get('promoted_user') %}
+            <p class="mt-2">
+              Se ha detectado y ejecutado un script XSS. El usuario {{
+              session.get('promoted_user') }} ha sido promovido a ELEGIDO.
+            </p>
+            <p>
+              <strong
+                >Debes cerrar sesión e iniciar sesión nuevamente para obtener tu
+                nuevo token con privilegios actualizados.</strong
+              >
+            </p>
+            {% endif %}
             <div class="mt-2">
               <a
-                href="{{ url_for('dashboard') }}"
+                href="{{ url_for('reset_simulation') }}"
                 class="btn btn-sm btn-danger"
               >
                 <i class="bi bi-arrow-return-left me-1"></i>Volver al panel
               </a>
+              {% if session.get('promoted_user') %}
+              <a
+                href="{{ url_for('logout') }}"
+                class="btn btn-sm btn-outline-light ms-2"
+              >
+                <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
+              </a>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -252,9 +281,9 @@
 </div>
 
 <script>
-  // Redireccionar automáticamente después de 10 segundos
+  // Redireccionar automáticamente después de 15 segundos
   setTimeout(() => {
-    window.location.href = "{{ url_for('dashboard') }}";
+    window.location.href = "{{ url_for('reset_simulation') }}";
   }, 15000);
 </script>
 {% endblock %}
